@@ -3,8 +3,8 @@ const http=require('http')
 const socketIO=require('socket.io')
 const cors=require('cors')
 const app=express()
-const {userJoins,userLeaves,getUsers, userLeaves}=require('./utils/user')
-const { Socket } = require('dgram')
+const {userJoins,userLeaves,getUsers}=require('./utils/user')
+
 
 const server=http.createServer(app)
 const io=socketIO(server)
@@ -40,24 +40,26 @@ io.on("connection",(socket)=>{
         io.to(user.room).emit("users",roomUsers)
         io.to(user.room).emit("canvasImage",imageUrl)
     })
+
+    socket.on("drawing",(data)=>{
+        imageUrl=data;
+        socket.broadcast.to(userRoom).emit("canvasImage",imageUrl)
+    })
+    
+    socket.on("disconnect",()=>{
+        const userLeave=userLeaves(socket.id)
+        const roomUsers=getUsers(userRoom)
+    
+        if(userLeave){
+            io.to(userLeave.room).emit("message",{
+                message:`${userLeave.username} left the chat`,
+            })
+            io.to(userLeave.room).emit("users",roomUsers)
+        }
+    })
 })
 
-socket.on("drawing",(data)=>{
-    imageUrl=data;
-    socket.broadcast.to(userRoom).emit("canvasImage",imageUrl)
-})
 
-socket.on("disconnect",()=>{
-    const userLeaves=userLeaves(socket.id)
-    const roomUsers=getUsers(userRoom)
-
-    if(userLeaves){
-        io.to(userLeaves.room).emit("message",{
-            message:`${userLeaves.username} left the chat`,
-        })
-        io.to(userLeaves.room).emit("users",roomUsers)
-    }
-})
 
 const PORT=process.env.PORT || 5000;
 
