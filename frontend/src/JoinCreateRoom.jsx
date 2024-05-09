@@ -115,7 +115,7 @@ export default function JoinCreateRoom({uuid,setUser,setRoomJoined}) {
                     type='text'
                     className='form-control outline-0'
                     value={joinRoomId}
-                    onChange={(e)=>setRoomId(e.target.value)}
+                    onChange={(e)=>setJoinRoomId(e.target.value)}
                     placeholder='Room Id'
                     style={{
                         boxShadow:'none'

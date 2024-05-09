@@ -36,7 +36,7 @@ export default function Room({userNum,socket,setUsers,setUserNum}) {
            elements[elements.length-1],
         ])
         setElements((prevElements)=>
-        prevElements.filter((ele,index)=>index!==elements.length-1))
+        prevElements.slice(0,prevElements.length-1))
     }
 
     const redo=()=>{
@@ -123,7 +123,7 @@ export default function Room({userNum,socket,setUsers,setUserNum}) {
         type='button'
         className='btn btn-outline-primary'
         disabled={elements.length===0}
-        onClick={()=>undo}
+        onClick={()=>undo()}
         >
             Undo 
             </button>
